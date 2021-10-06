@@ -30,7 +30,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 
 	"github.com/minio/console/models"
@@ -57,12 +56,7 @@ type UpdateUserInfoParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body *models.UpdateUser
-	/*
-	  Required: true
-	  In: query
-	*/
-	Name string
+	Body *models.UpdateUserParams
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -74,11 +68,9 @@ func (o *UpdateUserInfoParams) BindRequest(r *http.Request, route *middleware.Ma
 
 	o.HTTPRequest = r
 
-	qs := runtime.Values(r.URL.Query())
-
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.UpdateUser
+		var body models.UpdateUserParams
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("body", "body", ""))
@@ -103,34 +95,8 @@ func (o *UpdateUserInfoParams) BindRequest(r *http.Request, route *middleware.Ma
 	} else {
 		res = append(res, errors.Required("body", "body", ""))
 	}
-
-	qName, qhkName, _ := qs.GetOK("name")
-	if err := o.bindName(qName, qhkName, route.Formats); err != nil {
-		res = append(res, err)
-	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-// bindName binds and validates parameter Name from query.
-func (o *UpdateUserInfoParams) bindName(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("name", "query", rawData)
-	}
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: true
-	// AllowEmptyValue: false
-
-	if err := validate.RequiredString("name", "query", raw); err != nil {
-		return err
-	}
-	o.Name = raw
-
 	return nil
 }

@@ -1213,9 +1213,10 @@ paths:
       operationId: GetUserInfo
       parameters:
         - name: name
-          in: query
+          in: body
           required: true
-          type: string
+          schema:
+            $ref: "#/definitions/userName"
       responses:
         200:
           description: A successful response.
@@ -1231,15 +1232,11 @@ paths:
       summary: Update User Info
       operationId: UpdateUserInfo
       parameters:
-        - name: name
-          in: query
-          required: true
-          type: string
         - name: body
           in: body
           required: true
           schema:
-            $ref: "#/definitions/updateUser"
+            $ref: "#/definitions/updateUserParams"
       responses:
         200:
           description: A successful response.
@@ -1256,9 +1253,10 @@ paths:
       operationId: RemoveUser
       parameters:
         - name: name
-          in: query
+          in: body
           required: true
-          type: string
+          schema:
+            $ref: "#/definitions/userName"
       responses:
         204:
           description: A successful response.
@@ -1274,15 +1272,11 @@ paths:
       summary: Update Groups for a user
       operationId: UpdateUserGroups
       parameters:
-        - name: name
-          in: query
-          required: true
-          type: string
         - name: body
           in: body
           required: true
           schema:
-            $ref: "#/definitions/updateUserGroups"
+            $ref: "#/definitions/updateUserGroupsParams"
       responses:
         200:
           description: A successful response.
@@ -2946,11 +2940,19 @@ definitions:
         type: array
         items:
           type: string
-  updateUserGroups:
+  userName:
+    type: object
+    properties:
+      user:
+        type: string
+  updateUserGroupsParams:
     type: object
     required:
+      - name
       - groups
     properties:
+      name:
+        type: string
       groups:
         type: array
         items:
@@ -3016,12 +3018,15 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/notificationEndpointItem"
-  updateUser:
+  updateUserParams:
     type: object
     required:
+      - name
       - status
       - groups
     properties:
+      name:
+        type: string
       status:
         type: string
       groups:

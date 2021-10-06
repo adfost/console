@@ -2934,10 +2934,12 @@ func init() {
         "operationId": "GetUserInfo",
         "parameters": [
           {
-            "type": "string",
             "name": "name",
-            "in": "query",
-            "required": true
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userName"
+            }
           }
         ],
         "responses": {
@@ -2963,17 +2965,11 @@ func init() {
         "operationId": "UpdateUserInfo",
         "parameters": [
           {
-            "type": "string",
-            "name": "name",
-            "in": "query",
-            "required": true
-          },
-          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/updateUser"
+              "$ref": "#/definitions/updateUserParams"
             }
           }
         ],
@@ -3000,10 +2996,12 @@ func init() {
         "operationId": "RemoveUser",
         "parameters": [
           {
-            "type": "string",
             "name": "name",
-            "in": "query",
-            "required": true
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userName"
+            }
           }
         ],
         "responses": {
@@ -3028,17 +3026,11 @@ func init() {
         "operationId": "UpdateUserGroups",
         "parameters": [
           {
-            "type": "string",
-            "name": "name",
-            "in": "query",
-            "required": true
-          },
-          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/updateUserGroups"
+              "$ref": "#/definitions/updateUserGroupsParams"
             }
           }
         ],
@@ -5259,9 +5251,28 @@ func init() {
         }
       }
     },
-    "updateUser": {
+    "updateUserGroupsParams": {
       "type": "object",
       "required": [
+        "name",
+        "groups"
+      ],
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "updateUserParams": {
+      "type": "object",
+      "required": [
+        "name",
         "status",
         "groups"
       ],
@@ -5272,22 +5283,11 @@ func init() {
             "type": "string"
           }
         },
+        "name": {
+          "type": "string"
+        },
         "status": {
           "type": "string"
-        }
-      }
-    },
-    "updateUserGroups": {
-      "type": "object",
-      "required": [
-        "groups"
-      ],
-      "properties": {
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -5310,6 +5310,14 @@ func init() {
           }
         },
         "status": {
+          "type": "string"
+        }
+      }
+    },
+    "userName": {
+      "type": "object",
+      "properties": {
+        "user": {
           "type": "string"
         }
       }
@@ -8318,10 +8326,12 @@ func init() {
         "operationId": "GetUserInfo",
         "parameters": [
           {
-            "type": "string",
             "name": "name",
-            "in": "query",
-            "required": true
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userName"
+            }
           }
         ],
         "responses": {
@@ -8347,17 +8357,11 @@ func init() {
         "operationId": "UpdateUserInfo",
         "parameters": [
           {
-            "type": "string",
-            "name": "name",
-            "in": "query",
-            "required": true
-          },
-          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/updateUser"
+              "$ref": "#/definitions/updateUserParams"
             }
           }
         ],
@@ -8384,10 +8388,12 @@ func init() {
         "operationId": "RemoveUser",
         "parameters": [
           {
-            "type": "string",
             "name": "name",
-            "in": "query",
-            "required": true
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userName"
+            }
           }
         ],
         "responses": {
@@ -8412,17 +8418,11 @@ func init() {
         "operationId": "UpdateUserGroups",
         "parameters": [
           {
-            "type": "string",
-            "name": "name",
-            "in": "query",
-            "required": true
-          },
-          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/updateUserGroups"
+              "$ref": "#/definitions/updateUserGroupsParams"
             }
           }
         ],
@@ -10753,9 +10753,28 @@ func init() {
         }
       }
     },
-    "updateUser": {
+    "updateUserGroupsParams": {
       "type": "object",
       "required": [
+        "name",
+        "groups"
+      ],
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "updateUserParams": {
+      "type": "object",
+      "required": [
+        "name",
         "status",
         "groups"
       ],
@@ -10766,22 +10785,11 @@ func init() {
             "type": "string"
           }
         },
+        "name": {
+          "type": "string"
+        },
         "status": {
           "type": "string"
-        }
-      }
-    },
-    "updateUserGroups": {
-      "type": "object",
-      "required": [
-        "groups"
-      ],
-      "properties": {
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -10804,6 +10812,14 @@ func init() {
           }
         },
         "status": {
+          "type": "string"
+        }
+      }
+    },
+    "userName": {
+      "type": "object",
+      "properties": {
+        "user": {
           "type": "string"
         }
       }

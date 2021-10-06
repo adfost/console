@@ -217,7 +217,7 @@ func getRemoveUserResponse(session *models.Principal, params admin_api.RemoveUse
 		return prepareError(err)
 	}
 
-	if session.AccountAccessKey == params.Name {
+	if session.AccountAccessKey == params.Name.User {
 		return prepareError(errAvoidSelfAccountDelete)
 	}
 
@@ -225,7 +225,7 @@ func getRemoveUserResponse(session *models.Principal, params admin_api.RemoveUse
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	if err := removeUser(ctx, adminClient, params.Name); err != nil {
+	if err := removeUser(ctx, adminClient, params.Name.User); err != nil {
 		return prepareError(err)
 	}
 
@@ -254,13 +254,13 @@ func getUserInfoResponse(session *models.Principal, params admin_api.GetUserInfo
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	user, err := getUserInfo(ctx, adminClient, params.Name)
+	user, err := getUserInfo(ctx, adminClient, params.Name.User)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 
 	userInformation := &models.User{
-		AccessKey: params.Name,
+		AccessKey: params.Name.User,
 		MemberOf:  user.MemberOf,
 		Policy:    strings.Split(user.PolicyName, ","),
 		Status:    string(user.Status),
@@ -369,7 +369,7 @@ func getUpdateUserGroupsResponse(session *models.Principal, params admin_api.Upd
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.Groups)
+	user, err := updateUserGroups(ctx, adminClient, *params.Body.Name, params.Body.Groups)
 
 	if err != nil {
 		return nil, prepareError(err)
@@ -405,7 +405,7 @@ func getUpdateUserResponse(session *models.Principal, params admin_api.UpdateUse
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	name := params.Name
+	name := *params.Body.Name
 	status := *params.Body.Status
 	groups := params.Body.Groups
 
