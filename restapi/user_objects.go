@@ -304,27 +304,40 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 
 func getDownloadObjectResponse(session *models.Principal, params user_api.DownloadObjectParams) (io.ReadCloser, *models.Error) {
 	ctx := context.Background()
-	var prefix string
-	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+	if *params.IsFolder {
+		var prefix string
+		if params.Prefix != "" {
+			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
+			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+			if err != nil {
+				return nil, prepareError(err)
+			}
+			prefix = string(decodedPrefix)
+		}
+	} else {
+		var prefix string
+		if params.Prefix != "" {
+			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
+			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+			if err != nil {
+				return nil, prepareError(err)
+			}
+			prefix = string(decodedPrefix)
+		}
+		s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
 		if err != nil {
 			return nil, prepareError(err)
 		}
-		prefix = string(decodedPrefix)
+		// create a mc S3Client interface implementation
+		// defining the client to be used
+		mcClient := mcClient{client: s3Client}
+		object, err := downloadObject(ctx, mcClient, params.VersionID)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		return object, nil
 	}
-	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
-	if err != nil {
-		return nil, prepareError(err)
-	}
-	// create a mc S3Client interface implementation
-	// defining the client to be used
-	mcClient := mcClient{client: s3Client}
-	object, err := downloadObject(ctx, mcClient, params.VersionID)
-	if err != nil {
-		return nil, prepareError(err)
-	}
-	return object, nil
+	return nil, nil
 }
 
 func downloadObject(ctx context.Context, client MCClient, versionID *string) (io.ReadCloser, error) {

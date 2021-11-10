@@ -77,6 +77,7 @@ import RefreshIcon from "../../../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../../../icons/SearchIcon";
 import UploadIcon from "../../../../../../icons/UploadIcon";
 import {
+  DownloadIcon,
   FileBookIcon,
   FileCodeIcon,
   FileConfigIcon,

@@ -40,10 +40,14 @@ func NewDownloadObjectParams() DownloadObjectParams {
 	var (
 		// initialize parameters with default values
 
+		isFolderDefault = bool(false)
+
 		previewDefault = bool(false)
 	)
 
 	return DownloadObjectParams{
+		IsFolder: &isFolderDefault,
+
 		Preview: &previewDefault,
 	}
 }
@@ -62,6 +66,11 @@ type DownloadObjectParams struct {
 	  In: path
 	*/
 	BucketName string
+	/*
+	  In: query
+	  Default: false
+	*/
+	IsFolder *bool
 	/*
 	  Required: true
 	  In: query
@@ -91,6 +100,11 @@ func (o *DownloadObjectParams) BindRequest(r *http.Request, route *middleware.Ma
 
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qIsFolder, qhkIsFolder, _ := qs.GetOK("isFolder")
+	if err := o.bindIsFolder(qIsFolder, qhkIsFolder, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -124,6 +138,30 @@ func (o *DownloadObjectParams) bindBucketName(rawData []string, hasKey bool, for
 	// Required: true
 	// Parameter is provided by construction from the route
 	o.BucketName = raw
+
+	return nil
+}
+
+// bindIsFolder binds and validates parameter IsFolder from query.
+func (o *DownloadObjectParams) bindIsFolder(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewDownloadObjectParams()
+		return nil
+	}
+
+	value, err := swag.ConvertBool(raw)
+	if err != nil {
+		return errors.InvalidType("isFolder", "query", "bool", raw)
+	}
+	o.IsFolder = &value
 
 	return nil
 }

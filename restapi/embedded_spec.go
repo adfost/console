@@ -1229,6 +1229,12 @@ func init() {
             "default": false,
             "name": "preview",
             "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": false,
+            "name": "isFolder",
+            "in": "query"
           }
         ],
         "responses": {
@@ -2412,7 +2418,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from Operator.",
+        "summary": "Logout from Console.",
         "operationId": "Logout",
         "responses": {
           "200": {
@@ -6930,6 +6936,12 @@ func init() {
             "default": false,
             "name": "preview",
             "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": false,
+            "name": "isFolder",
+            "in": "query"
           }
         ],
         "responses": {
@@ -8113,7 +8125,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from Operator.",
+        "summary": "Logout from Console.",
         "operationId": "Logout",
         "responses": {
           "200": {

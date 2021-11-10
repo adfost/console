@@ -447,6 +447,11 @@ paths:
           required: false
           type: boolean
           default: false
+        - name: isFolder
+          in: query
+          required: false
+          type: boolean
+          default: false
       responses:
         200:
           description: A successful response.

@@ -35,6 +35,7 @@ import (
 type DownloadObjectURL struct {
 	BucketName string
 
+	IsFolder  *bool
 	Prefix    string
 	Preview   *bool
 	VersionID *string
@@ -79,6 +80,14 @@ func (o *DownloadObjectURL) Build() (*url.URL, error) {
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
+
+	var isFolderQ string
+	if o.IsFolder != nil {
+		isFolderQ = swag.FormatBool(*o.IsFolder)
+	}
+	if isFolderQ != "" {
+		qs.Set("isFolder", isFolderQ)
+	}
 
 	prefixQ := o.Prefix
 	if prefixQ != "" {
