@@ -384,6 +384,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIShareObjectHandler: user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ShareObject has not yet been implemented")
 		}),
+		UserAPIShareObjectWithCredsHandler: user_api.ShareObjectWithCredsHandlerFunc(func(params user_api.ShareObjectWithCredsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.ShareObjectWithCreds has not yet been implemented")
+		}),
 		AdminAPISiteReplicationEditHandler: admin_api.SiteReplicationEditHandlerFunc(func(params admin_api.SiteReplicationEditParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SiteReplicationEdit has not yet been implemented")
 		}),
@@ -694,6 +697,8 @@ type ConsoleAPI struct {
 	UserAPISetServiceAccountPolicyHandler user_api.SetServiceAccountPolicyHandler
 	// UserAPIShareObjectHandler sets the operation handler for the share object operation
 	UserAPIShareObjectHandler user_api.ShareObjectHandler
+	// UserAPIShareObjectWithCredsHandler sets the operation handler for the share object with creds operation
+	UserAPIShareObjectWithCredsHandler user_api.ShareObjectWithCredsHandler
 	// AdminAPISiteReplicationEditHandler sets the operation handler for the site replication edit operation
 	AdminAPISiteReplicationEditHandler admin_api.SiteReplicationEditHandler
 	// AdminAPISiteReplicationInfoAddHandler sets the operation handler for the site replication info add operation
@@ -1126,6 +1131,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIShareObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.ShareObjectHandler")
+	}
+	if o.UserAPIShareObjectWithCredsHandler == nil {
+		unregistered = append(unregistered, "user_api.ShareObjectWithCredsHandler")
 	}
 	if o.AdminAPISiteReplicationEditHandler == nil {
 		unregistered = append(unregistered, "admin_api.SiteReplicationEditHandler")
@@ -1693,6 +1701,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects/share"] = user_api.NewShareObject(o.context, o.UserAPIShareObjectHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/buckets/{bucket_name}/objects/share-with-credentials"] = user_api.NewShareObjectWithCreds(o.context, o.UserAPIShareObjectWithCredsHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

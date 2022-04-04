@@ -477,6 +477,44 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/objects/share-with-credentials:
+    post:
+      summary: Shares an Object on a url with new Credentials
+      operationId: ShareObjectWithCreds
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: expires
+          in: query
+          required: false
+          type: string
+        - name: creds
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/shareCredentials"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{bucket_name}/objects/legalhold:
     put:
       summary: Put Object's legalhold status
@@ -4656,4 +4694,12 @@ definitions:
       current_version:
         type: string
       latest_version:
+        type: string
+
+  shareCredentials:
+    type: object
+    properties:
+      access_key:
+        type: string
+      secret_key:
         type: string

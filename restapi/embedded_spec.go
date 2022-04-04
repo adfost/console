@@ -1797,6 +1797,62 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/objects/share-with-credentials": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Shares an Object on a url with new Credentials",
+        "operationId": "ShareObjectWithCreds",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "expires",
+            "in": "query"
+          },
+          {
+            "name": "creds",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/shareCredentials"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/objects/tags": {
       "put": {
         "tags": [
@@ -6242,6 +6298,17 @@ func init() {
         }
       }
     },
+    "shareCredentials": {
+      "type": "object",
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        }
+      }
+    },
     "siteReplicationAddRequest": {
       "type": "array",
       "items": {
@@ -8551,6 +8618,62 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/objects/share-with-credentials": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Shares an Object on a url with new Credentials",
+        "operationId": "ShareObjectWithCreds",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "expires",
+            "in": "query"
+          },
+          {
+            "name": "creds",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/shareCredentials"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
             "description": "A successful response.",
             "schema": {
               "type": "string"
@@ -13133,6 +13256,17 @@ func init() {
         },
         "entityType": {
           "$ref": "#/definitions/policyEntity"
+        }
+      }
+    },
+    "shareCredentials": {
+      "type": "object",
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
         }
       }
     },

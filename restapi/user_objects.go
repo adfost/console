@@ -125,6 +125,14 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewShareObjectOK().WithPayload(*resp)
 	})
+	// get share object url
+	api.UserAPIShareObjectWithCredsHandler = user_api.ShareObjectWithCredsHandlerFunc(func(params user_api.ShareObjectWithCredsParams, session *models.Principal) middleware.Responder {
+		resp, err := getShareObjectWithCredsResponse(session, params)
+		if err != nil {
+			return user_api.NewShareObjectWithCredsDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewShareObjectWithCredsCreated().WithPayload(*resp)
+	})
 	// set object legalhold status
 	api.UserAPIPutObjectLegalHoldHandler = user_api.PutObjectLegalHoldHandlerFunc(func(params user_api.PutObjectLegalHoldParams, session *models.Principal) middleware.Responder {
 		if err := getSetObjectLegalHoldResponse(session, params); err != nil {
@@ -820,6 +828,36 @@ func uploadFiles(ctx context.Context, client MinioClient, params user_api.PostBu
 
 // getShareObjectResponse returns a share object url
 func getShareObjectResponse(session *models.Principal, params user_api.ShareObjectParams) (*string, *models.Error) {
+	ctx := context.Background()
+	var prefix string
+	if params.Prefix != "" {
+		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
+		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		prefix = string(decodedPrefix)
+	}
+	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a mc S3Client interface implementation
+	// defining the client to be used
+	mcClient := mcClient{client: s3Client}
+	var expireDuration string
+	if params.Expires != nil {
+		expireDuration = *params.Expires
+	}
+	url, err := getShareObjectURL(ctx, mcClient, params.VersionID, expireDuration)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	return url, nil
+}
+
+// getShareObjectWithCredsResponse returns a share object url with specified creds
+func getShareObjectWithCredsResponse(session *models.Principal, params user_api.ShareObjectParams) (*string, *models.Error) {
 	ctx := context.Background()
 	var prefix string
 	if params.Prefix != "" {
